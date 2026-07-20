@@ -38,7 +38,7 @@
     <section class="container section-padding">
         <div class="who-we-are">
             <div class="who-we-are-image">
-                <img src="https://images.unsplash.com/photo-1512413914562-b13c3aa30953?q=80&w=800&auto=format&fit=crop" alt="Wardrobe">
+                <img src="images/wardrobe.jpg" alt="Wardrobe">
             </div>
             <div class="who-we-are-content">
                 <h2 class="section-title-left">WHO WE ARE</h2>

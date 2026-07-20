@@ -96,7 +96,6 @@
                                    onchange="this.form.submit()"
                                    style="accent-color: #8b0000; cursor: pointer;">
                             <div class="d-flex justify-content-between mt-2" style="font-size: 13px; color: #aaa;">
-                                <span>Rp0</span>
                                 <span id="priceVal" style="color: #fff; font-weight: bold;">Rp{{ number_format(request('max_price', 500000), 0, ',', '.') }}</span>
                             </div>
                         </div>
@@ -168,7 +167,7 @@
                                     <div class="product-price-row">
                                         <div class="product-price-v2">Rp{{ number_format($product->price_per_day, 0, ',', '.') }} <span style="font-size:11px; font-weight:normal; color:var(--text-muted);">/ hari</span></div>
                                         <div class="product-rating-v2">
-                                            <i class="fa-solid fa-star"></i> 4.9 <span>(42)</span>
+                                            <i class="fa-solid fa-star"></i> 4.9 <span>(4)</span>
                                         </div>
                                     </div>
 
