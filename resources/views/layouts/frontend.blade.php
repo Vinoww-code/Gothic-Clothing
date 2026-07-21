@@ -28,7 +28,6 @@
             <div class="navbar-icons">
                 <a href="#"><i class="fas fa-search"></i></a>
                 <a href="{{ route('login') }}"><i class="far fa-user"></i></a>
-                <a href="#"><i class="fas fa-shopping-cart"></i><span style="background:var(--primary-color); font-size:10px; padding:2px 5px; border-radius:50%; position:relative; top:-10px; left:-5px;">0</span></a>
             </div>
         </div>
     </nav>
@@ -56,9 +55,9 @@
                     <h4 class="footer-title">Quick Links</h4>
                     <ul class="footer-links">
                         <li><a href="#">Home</a></li>
-                        <li><a href="#collection">Collection</a></li>
-                        <li><a href="#accessories">Accessories</a></li>
-                        <li><a href="#bestseller">Best Seller</a></li>
+                        <li><a href="{{ route('collection') }}">Collection</a></li>
+                        <li><a href="{{ route('accessories') }}">Accessories</a></li>
+                        <li><a href="{{ route('home') }}#bestseller">Best Seller</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
