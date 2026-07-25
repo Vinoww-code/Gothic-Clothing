@@ -14,34 +14,34 @@ class CheckoutController extends Controller
         return view('frontend.checkout', compact('product'));
     }
 
-    // 2. Memproses Data Checkout Bohongan
-    public function process(Request $request, Product $product)
-    {
-        $request->validate([
-            'nama' => 'required|string',
-            'metode_pengiriman' => 'required|in:pickup,delivery'
-        ]);
+    public function process(Request $request, $id)
+        {
+            // 1. Validasi sederhana saja yang penting gambar terisi
+            $request->validate([
+                'foto_ktp' => 'required|image|max:3000',
+                'foto_selfie' => 'required|image|max:3000',
+                'delivery_method' => 'required',
+                'payment_method' => 'required',
+            ]);
 
-        // Buat Kode Unik jika dia milih "Ambil di Tempat"
-        $kode_pengambilan = null;
-        if ($request->metode_pengiriman == 'pickup') {
-            $kode_pengambilan = 'GOTHIC-' . strtoupper(Str::random(5)); 
+            // 2. Simpan foto ke folder public (opsional, jika ingin dilihat nanti)
+            if($request->hasFile('foto_ktp')) {
+                $request->file('foto_ktp')->store('ktp_images', 'public');
+            }
+            if($request->hasFile('foto_selfie')) {
+                $request->file('foto_selfie')->store('selfie_images', 'public');
+            }
+
+            // 3. Buat kode transaksi unik
+            $kode_unik = 'GTC-' . strtoupper(Str::random(5));
+
+            // 4. Langsung lemparkan ke halaman sukses!
+            return redirect()->route('checkout.success')->with([
+                'delivery_method' => $request->delivery_method,
+                'payment_method' => $request->payment_method,
+                'unique_code' => $kode_unik
+            ]);
         }
-
-        // Kumpulkan data pesanan (tanpa simpan ke database)
-        $orderData = [
-            'order_id' => 'ORD-' . time(),
-            'nama_pembeli' => $request->nama,
-            'produk' => $product->name,
-            'harga' => $product->price_per_day,
-            'metode' => $request->metode_pengiriman,
-            'kode_pengambilan' => $kode_pengambilan,
-            'tanggal' => now()->format('d M Y H:i')
-        ];
-
-        // Simpan sementara di Session lalu alihkan ke halaman sukses
-        return redirect()->route('checkout.success')->with('orderData', $orderData);
-    }
 
     // 3. Menampilkan Halaman Nota/Success
     public function success()

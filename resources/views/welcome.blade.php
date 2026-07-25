@@ -1,6 +1,108 @@
 @extends('layouts.frontend')
 
 @section('content')
+
+<!-- ========================================== -->
+<!-- CSS RESPONSIF KHUSUS HALAMAN HOME          -->
+<!-- ========================================== -->
+<style>
+    /* Pastikan gambar hero menutupi seluruh area dengan proporsional */
+    .hero {
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    /* ==== PENGATURAN KHUSUS LAYAR HP & TABLET (Max 768px) ==== */
+    @media (max-width: 768px) {
+        /* 1. HERO BANNER */
+        .hero-content {
+            width: 100% !important; /* Memenuhi layar, tidak cuma di kiri */
+            text-align: center; /* Teks ke tengah */
+            padding: 20px;
+        }
+        .hero-title {
+            font-size: 32px !important; /* Judul diperkecil agar tidak menumpuk */
+            line-height: 1.2;
+        }
+        .hero-buttons {
+            display: flex;
+            flex-direction: column; /* Tombol menjadi atas-bawah */
+            gap: 15px;
+            width: 100%;
+        }
+        .hero-buttons .btn {
+            width: 100%; /* Tombol memanjang penuh */
+        }
+
+        /* 2. WHO WE ARE */
+        .who-we-are {
+            display: flex;
+            flex-direction: column; /* Gambar di atas, teks di bawah */
+            gap: 30px;
+        }
+        .who-we-are-image {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        .who-we-are-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px; /* Tambahan estetika */
+        }
+        .section-title-left {
+            text-align: center; /* Judul ke tengah */
+        }
+        .who-we-are-desc {
+            text-align: center;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr) !important; /* Kotak statistik jadi 2 kolom */
+            gap: 15px;
+        }
+
+        /* 3. BEST SELLER (Produk) */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr) !important; /* Menjadi 2 kolom (Kiri-Kanan) */
+            gap: 10px;
+        }
+        .product-name {
+            font-size: 14px !important;
+        }
+        .product-price {
+            font-size: 13px !important;
+        }
+
+        /* 4. HOW TO RENT */
+        .steps-grid {
+            display: grid;
+            grid-template-columns: 1fr !important; /* Menurun ke bawah 1 kolom */
+            gap: 20px;
+        }
+
+        /* 5. TESTIMONIALS */
+        .testi-grid {
+            display: grid;
+            grid-template-columns: 1fr !important; /* Menurun ke bawah 1 kolom */
+            gap: 20px;
+        }
+    }
+
+    /* ==== PENGATURAN KHUSUS LAYAR HP SANGAT KECIL (Max 480px) ==== */
+    @media (max-width: 480px) {
+        .product-grid {
+            grid-template-columns: 1fr !important; /* Produk menjadi 1 kolom besar memanjang */
+        }
+        .stats-grid {
+            grid-template-columns: 1fr !important; /* Statistik menjadi 1 kolom memanjang */
+        }
+    }
+</style>
+<!-- ========================================== -->
+
+
     <!-- 1. HERO BANNER -->
     @if($banner)
         <section class="hero" style="background-image: url('{{ asset('storage/' . $banner->image_path) }}');">

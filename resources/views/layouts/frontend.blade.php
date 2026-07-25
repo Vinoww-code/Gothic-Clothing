@@ -9,13 +9,103 @@
     
     <!-- Load Vite CSS & JS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <!-- ========================================== -->
+    <!-- CSS TAMBAHAN KHUSUS MENU & FIX SCROLL      -->
+    <!-- ========================================== -->
+    <style>
+        /* Mengunci agar halaman tidak bisa di-scroll ke samping */
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Sembunyikan tombol burger di Laptop/PC */
+        .hamburger-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 24px;
+            cursor: pointer;
+            margin-left: 15px;
+        }
+
+        /* Pengaturan Khusus Layar HP/Tablet */
+        @media (max-width: 768px) {
+            .hamburger-btn {
+                display: block; /* Munculkan tombol burger */
+            }
+            
+            /* Pastikan kontainer navbar rata tengah/kiri-kanan */
+            .navbar .container {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                position: relative; 
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            /* Dorong icon user ke sebelah kiri tombol burger */
+            .navbar-icons {
+                margin-left: auto; 
+            }
+
+            /* Sembunyikan menu link secara default di HP */
+            .navbar-nav {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%; /* Turun ke bawah header */
+                left: 0;
+                width: 100%;
+                background-color: #0a0a0a; /* Warna background menu pas dibuka */
+                padding: 20px 0;
+                text-align: center;
+                gap: 15px;
+                border-top: 1px solid #333;
+                z-index: 999;
+                margin: 0;
+            }
+
+            /* Saat class 'active' ditambah lewat JS, menu akan muncul */
+            .navbar-nav.active {
+                display: flex;
+            }
+            /* TAMBAHKAN KODE INI KE DALAM @media (max-width: 768px) DI FILE frontend.blade.php */
+
+            .footer-grid {
+                display: flex !important;
+                flex-direction: column !important; /* Memaksa footer berbaris dari atas ke bawah di HP */
+                gap: 40px !important; /* Jarak antar kolom footer */
+            }
+
+            .footer-col {
+                width: 100% !important;
+                text-align: left; /* Sesuaikan jika ingin rata tengah (center) */
+            }
+
+            /* Merapikan bagian bawah footer (Copyright & Link) di HP */
+            .footer-bottom {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Navbar -->
     <nav class="navbar">
         <div class="container">
             <a href="{{ route('home') }}" class="navbar-brand">GOTHIC CLOTHING</a>
-            <ul class="navbar-nav">
+            
+            <!-- Tambahkan ID 'navLinks' di sini -->
+            <ul class="navbar-nav" id="navLinks">
                 <li><a href="{{ route('home') }}">Home</a></li>
                 <li><a href="{{ route('collection') }}">Collection</a></li>
                 <li><a href="{{ route('accessories') }}">Accessories</a></li>
@@ -25,10 +115,16 @@
                 <li><a href="{{ route('home') }}#faq">FAQ</a></li>
                 <li><a href="{{ route('contact') }}">Contact</a></li>
             </ul>
+            
             <div class="navbar-icons">
-                <a href="#"><i class="fas fa-search"></i></a>
+                <!-- Icon Pencarian Telah Dihapus -->
                 <a href="{{ route('login') }}"><i class="far fa-user"></i></a>
             </div>
+
+            <!-- Tombol Burger Tambahan -->
+            <button class="hamburger-btn" id="hamburgerBtn">
+                <i class="fa-solid fa-bars"></i>
+            </button>
         </div>
     </nav>
 
@@ -87,5 +183,30 @@
             </div>
         </div>
     </footer>
+
+    <!-- ========================================== -->
+    <!-- JAVASCRIPT UNTUK MENU HAMBURGER            -->
+    <!-- ========================================== -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const navLinks = document.getElementById('navLinks');
+            const icon = hamburgerBtn.querySelector('i');
+
+            hamburgerBtn.addEventListener('click', function() {
+                // Munculkan / Sembunyikan menu
+                navLinks.classList.toggle('active');
+                
+                // Ubah icon dari garis tiga ke tanda silang (X)
+                if (navLinks.classList.contains('active')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-xmark');
+                } else {
+                    icon.classList.remove('fa-xmark');
+                    icon.classList.add('fa-bars');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

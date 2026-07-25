@@ -1,40 +1,45 @@
 @extends('layouts.frontend')
 
 @section('content')
-<div class="container" style="margin-top: 50px; margin-bottom: 100px; color: white;">
-    <div class="row justify-content-center">
-        <div class="col-md-6" style="background: #111; padding: 40px; border-radius: 8px; border: 1px solid #333; text-align: center;">
-            <i class="fa-solid fa-circle-check" style="font-size: 60px; color: #28a745; margin-bottom: 20px;"></i>
-            <h2 style="font-family: serif;">Pembayaran Berhasil!</h2>
-            <p class="text-muted mb-4">Terima kasih telah menyewa di Gothic Clothing.</p>
-
-            <div style="background: #222; padding: 20px; border-radius: 8px; text-align: left; margin-bottom: 30px; border: 1px dashed #444;">
-                <p><strong>Order ID:</strong> {{ $orderData['order_id'] }}</p>
-                <p><strong>Nama:</strong> {{ $orderData['nama_pembeli'] }}</p>
-                <p><strong>Produk:</strong> {{ $orderData['produk'] }}</p>
-                <p><strong>Harga:</strong> Rp{{ number_format($orderData['harga'], 0, ',', '.') }} / hari</p>
-                <p><strong>Tanggal:</strong> {{ $orderData['tanggal'] }}</p>
-                <hr style="border-color: #444;">
-                <p class="mb-0"><strong>Metode:</strong> {{ $orderData['metode'] == 'pickup' ? 'Ambil di Toko' : 'Dikirim ke Lokasi' }}</p>
+<div class="container" style="min-height: 60vh; display: flex; align-items: center; justify-content: center; margin-top: 40px; margin-bottom: 40px;">
+    <div style="background: #111; padding: 40px; border-radius: 8px; text-align: center; border: 1px solid #333; max-width: 500px; width: 100%;">
+        
+        <i class="fa-solid fa-circle-check" style="font-size: 60px; color: #28a745; margin-bottom: 20px;"></i>
+        <h2 style="color: #fff; margin-bottom: 10px;">Pemesanan Berhasil Dibuat!</h2>
+        
+        <!-- PENGATURAN INSTRUKSI PEMBAYARAN -->
+        @if(session('payment_method') == 'cod')
+            <p style="color: #aaa; margin-bottom: 20px; line-height: 1.6;">
+                Anda memilih metode <strong>Bayar di Tempat</strong>. <br>
+                @if(session('delivery_method') == 'pickup')
+                    Silakan datang ke toko kami, bayar di kasir, dan tunjukkan kode berikut:
+                @else
+                    Siapkan uang pas. Kostum akan segera kami antar, admin kami akan menghubungi Anda via WhatsApp. Berikut kode resi Anda:
+                @endif
+            </p>
+            <div style="background: #0a0a0a; border: 2px dashed #8b0000; padding: 15px; font-size: 24px; font-weight: bold; color: #ff4444; letter-spacing: 3px; margin-bottom: 20px;">
+                {{ session('unique_code') ?? 'GTC-8891' }}
             </div>
 
-            <!-- JIKA MILIH PICKUP, TAMPILKAN KODE INI -->
-            @if($orderData['metode'] == 'pickup')
-                <div style="background: rgba(139, 0, 0, 0.2); border: 1px solid #8b0000; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
-                    <h5 style="color: #ff4444; margin-bottom: 10px;">KODE PENGAMBILAN ANDA</h5>
-                    <h1 style="letter-spacing: 5px; margin-bottom: 0;">{{ $orderData['kode_pengambilan'] }}</h1>
-                    <small class="text-muted mt-2 d-block">Tunjukkan kode ini kepada kasir saat mengambil kostum.</small>
-                </div>
-            @else
-                <!-- JIKA MILIH DELIVERY, TAMPILKAN INI -->
-                <div style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; margin-bottom: 30px;">
-                    <i class="fa-solid fa-truck-fast mb-2" style="font-size: 24px;"></i>
-                    <p class="mb-0 text-muted">Kostum Anda sedang disiapkan dan akan segera dikirimkan ke alamat Anda.</p>
-                </div>
-            @endif
+        @elseif(session('payment_method') == 'qris')
+            <p style="color: #aaa; margin-bottom: 15px; line-height: 1.6;">Silakan <i>scan</i> QRIS di bawah ini untuk menyelesaikan pembayaran menggunakan <i>M-Banking</i> atau <i>E-Wallet</i> Anda:</p>
+            <!-- Contoh dummy QR Code -->
+            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" alt="QRIS" style="width: 200px; height: 200px; background: white; padding: 10px; border-radius: 8px; margin-bottom: 20px;">
+            <p style="color: #ff4444; font-size: 14px; font-weight: bold;">KODE PESANAN: {{ session('unique_code') }}</p>
 
-            <a href="{{ url('/') }}" class="btn btn-outline-light w-100">KEMBALI KE BERANDA</a>
-        </div>
+        @elseif(session('payment_method') == 'dana' || session('payment_method') == 'ovo')
+            <p style="color: #aaa; margin-bottom: 20px; line-height: 1.6;">Silakan transfer pembayaran ke nomor {{ strtoupper(session('payment_method')) }} berikut:</p>
+            <div style="background: #0a0a0a; border: 1px solid #333; padding: 15px; font-size: 20px; font-weight: bold; color: #fff; margin-bottom: 20px;">
+                {{ session('payment_method') == 'dana' ? '0812-3456-7890 (DANA)' : '0898-7654-3210 (OVO)' }} <br>
+                <span style="font-size: 14px; color: #888; font-weight: normal;">a.n. GOTHIC CLOTHING</span>
+            </div>
+            <p style="color: #ff4444; font-size: 14px; font-weight: bold;">KODE PESANAN: {{ session('unique_code') }}</p>
+        @else
+            <!-- Jika tidak ada session (halaman dibuka langsung) -->
+            <p style="color: #aaa; margin-bottom: 20px;">Sesi pembayaran tidak ditemukan atau sudah kadaluarsa.</p>
+        @endif
+
+        <a href="{{ url('/') }}" style="display: inline-block; padding: 12px 25px; background: #8b0000; color: #fff; text-decoration: none; border-radius: 4px; font-weight: bold; margin-top: 10px;">SELESAI & KEMBALI</a>
     </div>
 </div>
 @endsection

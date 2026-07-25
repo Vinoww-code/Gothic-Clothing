@@ -30,28 +30,35 @@ class CatalogController extends Controller
             $pageSubtitle = 'Temukan berbagai koleksi kostum gothic premium untuk segala kebutuhan acara Anda.';
         }
 
-        // 3. Masukkan Logika Filter Ukuran (Jika pembeli menceklis)
-        if ($request->has('sizes') && is_array($request->sizes)) {
-            $query->where(function($q) use ($request) {
-                foreach ($request->sizes as $size) {
-                    $q->orWhereJsonContains('sizes', $size);
+        if ($request->filled('search')) {
+                    $query->where('name', 'like', '%' . $request->search . '%');
                 }
-            });
-        }
 
-        // 4. Masukkan Logika Filter Warna (Jika pembeli menceklis)
-        if ($request->has('colors') && is_array($request->colors)) {
-            $query->where(function($q) use ($request) {
-                foreach ($request->colors as $color) {
-                    $q->orWhereJsonContains('colors', $color);
+                // 3. Masukkan Logika Filter Ukuran (Jika pembeli menceklis)
+                if ($request->has('sizes') && is_array($request->sizes)) {
+                    $query->where(function($q) use ($request) {
+                        foreach ($request->sizes as $size) {
+                            $q->orWhereJsonContains('sizes', $size);
+                        }
+                    });
                 }
-            });
-        }
-        if ($request->has('max_price') && $request->max_price != '') {
-            $query->where('price_per_day', '<=', $request->max_price);
-        }
-        // 5. EKSEKUSI QUERY PALING TERAKHIR (Setelah semua filter dimasukkan)
-        $products = $query->latest()->paginate(12);
+
+                // 4. Masukkan Logika Filter Warna (Jika pembeli menceklis)
+                if ($request->has('colors') && is_array($request->colors)) {
+                    $query->where(function($q) use ($request) {
+                        foreach ($request->colors as $color) {
+                            $q->orWhereJsonContains('colors', $color);
+                        }
+                    });
+                }
+                
+                if ($request->has('max_price') && $request->max_price != '') {
+                    $query->where('price_per_day', '<=', $request->max_price);
+                }
+                
+        // 5. EKSEKUSI QUERY PALING TERAKHIR 
+        // Wajib pakai ->withQueryString()
+        $products = $query->latest()->paginate(12)->withQueryString();
         
         $breadcrumb = ucfirst($type);
 
