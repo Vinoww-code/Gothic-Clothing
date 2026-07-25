@@ -14,45 +14,36 @@ class CheckoutController extends Controller
         return view('frontend.checkout', compact('product'));
     }
 
-    public function process(Request $request, $id)
-        {
-            // 1. Validasi sederhana saja yang penting gambar terisi
-            $request->validate([
-                'foto_ktp' => 'required|image|max:3000',
-                'foto_selfie' => 'required|image|max:3000',
-                'delivery_method' => 'required',
-                'payment_method' => 'required',
-            ]);
+public function process(Request $request, $id)
+    {
+        // 1. Validasi sederhana
+        $request->validate([
+            'foto_ktp' => 'required|image|max:3000',
+            'foto_selfie' => 'required|image|max:3000',
+            'delivery_method' => 'required',
+            'payment_method' => 'required',
+        ]);
 
-            // 2. Simpan foto ke folder public (opsional, jika ingin dilihat nanti)
-            if($request->hasFile('foto_ktp')) {
-                $request->file('foto_ktp')->store('ktp_images', 'public');
-            }
-            if($request->hasFile('foto_selfie')) {
-                $request->file('foto_selfie')->store('selfie_images', 'public');
-            }
+        // 2. Ambil data produk untuk ditampilkan di tagihan
+        $product = Product::findOrFail($id);
 
-            // 3. Buat kode transaksi unik
-            $kode_unik = 'GTC-' . strtoupper(Str::random(5));
+        // 3. Buat kode transaksi unik
+        $kode_unik = 'GTC-' . strtoupper(Str::random(5));
 
-            // 4. Langsung lemparkan ke halaman sukses!
-            return redirect()->route('checkout.success')->with([
-                'delivery_method' => $request->delivery_method,
-                'payment_method' => $request->payment_method,
-                'unique_code' => $kode_unik
-            ]);
-        }
+        // 4. Langsung lemparkan ke halaman sukses beserta SEMUA DATA PESANAN!
+        return redirect()->route('checkout.success')->with([
+            'product_name' => $product->name,
+            'total_price' => $product->price_per_day,
+            'delivery_method' => $request->delivery_method,
+            'payment_method' => $request->payment_method,
+            'unique_code' => $kode_unik
+        ]);
+    }
 
-    // 3. Menampilkan Halaman Nota/Success
     public function success()
     {
-        // Ambil data dari session, jika tidak ada (akses langsung) kembalikan ke home
-        $orderData = session('orderData');
-        
-        if (!$orderData) {
-            return redirect('/');
-        }
-
-        return view('frontend.success', compact('orderData'));
+        // HAPUS fitur yang menendang ke Home agar kamu tidak error lagi
+        return view('frontend.success');
     }
-}
+
+    }
