@@ -10,9 +10,6 @@
     <!-- Load Vite CSS & JS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <!-- ========================================== -->
-    <!-- CSS TAMBAHAN KHUSUS MENU & FIX SCROLL      -->
-    <!-- ========================================== -->
     <style>
         /* Mengunci agar halaman tidak bisa di-scroll ke samping */
         html, body {
@@ -116,10 +113,6 @@
                 <li><a href="{{ route('contact') }}">Contact</a></li>
             </ul>
             
-            <div class="navbar-icons">
-                <!-- Icon Pencarian Telah Dihapus -->
-                <a href="{{ route('login') }}"><i class="far fa-user"></i></a>
-            </div>
 
             <!-- Tombol Burger Tambahan -->
             <button class="hamburger-btn" id="hamburgerBtn">

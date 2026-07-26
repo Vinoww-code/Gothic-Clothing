@@ -98,6 +98,9 @@
         .stats-grid {
             grid-template-columns: 1fr !important; /* Statistik menjadi 1 kolom memanjang */
         }
+        .stat-box {
+            align-items: center;
+        }
     }
 </style>
 <!-- ========================================== -->

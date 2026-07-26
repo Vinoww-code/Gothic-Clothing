@@ -150,22 +150,25 @@
         <!-- ========================================== -->
         <div class="filter-wrapper">
             <div class="filter-sidebar p-4" style="background: #0a0a0a; border: 1px solid #222; border-radius: 8px; position: sticky; top: 20px;">
-                <h5 class="text-white mb-4" style="border-bottom: 1px solid #333; padding-bottom: 10px;"><i class="fa-solid fa-sliders"></i> FILTER</h5>
+                <h5 class="text-white" style="border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 30px; font-size: 16px; font-weight: bold; letter-spacing: 1px;">
+                    <i class="fa-solid fa-sliders" style="margin-right: 8px;"></i> FILTER
+                </h5>
                 
                 <form action="{{ url()->current() }}" method="GET">
                     
-                    <!-- BARU: Kolom Pencarian -->
-                    <div class="filter-group mb-4">
-                        <h6 class="text-white mb-3" style="font-family: serif; font-size: 14px; letter-spacing: 1px;">CARI PRODUK</h6>
+                    <!-- Kolom Pencarian -->
+                    <div class="filter-group" style="margin-bottom: 35px;">
+                        <h6 style="color: #bbb; font-family: sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase;">Pencarian</h6>
                         <div style="display: flex;">
                             <input type="text" name="search" value="{{ request('search') }}" placeholder="Ketik nama produk..." 
-                                   style="width: 100%; padding: 10px 12px; background: #111; border: 1px solid #444; color: white; border-radius: 4px; outline: none; font-size: 13px;">
+                                   style="width: 100%; padding: 10px 12px; background: #111; border: 1px solid #333; color: white; border-radius: 6px; outline: none; font-size: 13px; transition: 0.3s;"
+                                   onfocus="this.style.borderColor='#8b0000'" onblur="this.style.borderColor='#333'">
                         </div>
                     </div>
 
                     <!-- Filter Ukuran -->
-                    <div class="filter-group mb-4">
-                        <h6 class="text-white mb-3" style="font-family: serif; font-size: 14px; letter-spacing: 1px;">UKURAN</h6>
+                    <div class="filter-group" style="margin-bottom: 35px;">
+                        <h6 style="color: #bbb; font-family: sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase;">Ukuran</h6>
                         <div style="display: flex; flex-wrap: wrap; gap: 8px;">
                             @php $sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL']; @endphp
                             @foreach($sizes as $s)
@@ -175,10 +178,10 @@
                                         onchange="this.form.submit()"
                                         style="display: none;">
                                     
-                                    <div style="border: 1px solid {{ in_array($s, request('sizes', [])) ? '#8b0000' : '#444' }}; 
-                                                background-color: {{ in_array($s, request('sizes', [])) ? 'rgba(139,0,0,0.2)' : 'transparent' }};
-                                                padding: 6px 12px; color: {{ in_array($s, request('sizes', [])) ? '#fff' : '#aaa' }}; 
-                                                border-radius: 4px; font-size: 12px; font-weight: bold; transition: 0.2s;">
+                                    <div style="border: 1px solid {{ in_array($s, request('sizes', [])) ? '#8b0000' : '#333' }}; 
+                                                background-color: {{ in_array($s, request('sizes', [])) ? '#8b0000' : '#111' }};
+                                                padding: 8px 14px; color: {{ in_array($s, request('sizes', [])) ? '#fff' : '#aaa' }}; 
+                                                border-radius: 4px; font-size: 12px; font-weight: bold; transition: 0.2s; text-align: center; min-width: 40px;">
                                         {{ $s }}
                                     </div>
                                 </label>
@@ -187,9 +190,9 @@
                     </div>
 
                     <!-- Filter Warna -->
-                    <div class="filter-group mb-4">
-                        <h6 class="text-white mb-3" style="font-family: serif; font-size: 14px; letter-spacing: 1px;">WARNA</h6>
-                        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    <div class="filter-group" style="margin-bottom: 35px;">
+                        <h6 style="color: #bbb; font-family: sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase;">Warna</h6>
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
                             @php 
                                 $colors = [
                                     'Red' => '#8b0000', 
@@ -207,10 +210,11 @@
                                         onchange="this.form.submit()"
                                         style="display: none;">
                                     
-                                    <div style="width: 28px; height: 28px; border-radius: 50%; background: {{ $hex }}; 
-                                                border: 2px solid {{ in_array($name, request('colors', [])) ? '#ff4444' : '#333' }};
+                                    <div style="width: 30px; height: 30px; border-radius: 50%; background: {{ $hex }}; 
+                                                border: 2px solid {{ in_array($name, request('colors', [])) ? '#ff4444' : '#444' }};
                                                 box-shadow: {{ in_array($name, request('colors', [])) ? '0 0 8px rgba(255,0,0,0.5)' : 'none' }};
-                                                transition: 0.2s;">
+                                                transition: 0.2s;
+                                                position: relative;">
                                     </div>
                                 </label>
                             @endforeach
@@ -218,29 +222,28 @@
                     </div>
 
                     <!-- Filter Harga -->
-                    <div class="filter-group mb-4">
-                        <h6 class="text-white mb-3" style="font-family: serif; font-size: 14px; letter-spacing: 1px;">HARGA MAKSIMAL</h6>
+                    <div class="filter-group" style="margin-bottom: 30px;">
+                        <h6 style="color: #bbb; font-family: sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase;">Harga Maksimal</h6>
                         <input type="range" class="form-range w-100" name="max_price" 
                                min="0" max="500000" step="25000" 
                                value="{{ request('max_price', 500000) }}"
                                oninput="document.getElementById('priceVal').innerText = 'Rp' + parseInt(this.value).toLocaleString('id-ID')"
                                onchange="this.form.submit()"
                                style="accent-color: #8b0000; cursor: pointer;">
-                        <div class="d-flex justify-content-between mt-2" style="font-size: 13px; color: #aaa;">
+                        <div class="d-flex justify-content-between mt-2" style="font-size: 12px; color: #888;">
                             <span>Rp0</span>
                             <span id="priceVal" style="color: #fff; font-weight: bold;">Rp{{ number_format(request('max_price', 500000), 0, ',', '.') }}</span>
                         </div>
                     </div>
 
                     <!-- Tombol Aksi -->
-                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
-                        <button type="submit" class="btn w-100" style="background: #8b0000; color: white; border: none; font-weight: bold; padding: 10px;">
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 25px;">
+                        <button type="submit" class="btn w-100" style="background: #8b0000; color: white; border: none; font-weight: bold; padding: 12px; border-radius: 6px; font-size: 13px; letter-spacing: 1px;">
                             TERAPKAN FILTER
                         </button>
                         
-                        <!-- Reset Filter kini juga mendeteksi jika ada pencarian -->
                         @if(request()->has('sizes') || request()->has('colors') || request('max_price') != 500000 || request()->has('search'))
-                            <a href="{{ url()->current() }}" class="btn w-100" style="background: transparent; color: #fff; border: 1px solid #444; padding: 10px; text-align: center; text-decoration: none;">
+                            <a href="{{ url()->current() }}" class="btn w-100" style="background: transparent; color: #aaa; border: 1px solid #444; padding: 12px; text-align: center; text-decoration: none; border-radius: 6px; font-size: 13px; font-weight: bold; letter-spacing: 1px; transition: 0.3s;" onmouseover="this.style.color='#fff'; this.style.borderColor='#fff';" onmouseout="this.style.color='#aaa'; this.style.borderColor='#444';">
                                 RESET FILTER
                             </a>
                         @endif
