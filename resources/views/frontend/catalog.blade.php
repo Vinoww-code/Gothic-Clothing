@@ -28,52 +28,80 @@
     /* MEMBUAT FOTO PRODUK JADI PERSEGI (1:1) */
     .product-img-v2 {
         width: 100%;
-        aspect-ratio: 1 / 1 !important; /* Memaksa bentuk kotak persegi */
-        object-fit: cover !important; /* Mencegah gambar melar/gepeng */
-        height: auto !important; /* Menghapus batasan tinggi bawaan */
+        aspect-ratio: 1 / 1 !important; 
+        object-fit: cover !important; 
+        height: auto !important; 
         display: block;
     }
 
     /* Mengatur Grid di Laptop agar rapi (4 kolom atau menyesuaikan) */
     .product-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr); /* 4 kotak ke samping di PC */
+        grid-template-columns: repeat(4, 1fr); 
         gap: 20px;
     }
+    
     .product-card-v2 {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    }
-
-    .product-info-v2 {
         display: flex;
         flex-direction: column;
-        gap: 8px; /* Memberikan jarak nafas antar teks */
-        padding-top: 15px;
+        justify-content: space-between;
+        background: #111;
+        border: 1px solid #222;
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+        transition: transform 0.3s ease, border-color 0.3s ease;
+        height: 100%;
+    }
+
+    .product-card-v2:hover {
+        transform: translateY(-5px);
+        border-color: #8b0000;
     }
 
     .badge-tersedia {
-        position: relative !important; /* Membatalkan efek melayang yang menabrak teks */
-        display: inline-block;
-        width: max-content;
-        margin-top: 10px;
-        margin-bottom: 5px;
+        position: absolute !important;
+        top: 10px;
+        left: 10px;
+        z-index: 2;
+        color: white;
+        padding: 5px 10px;
+        font-size: 11px;
+        font-weight: bold;
         border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        margin: 0;
     }
 
-    .product-cat-v2 {
-        color: #888;
-        font-size: 12px;
-        margin-bottom: 5px;
+    .btn-wishlist {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 2;
+        background: rgba(0, 0, 0, 0.6);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: 0.3s;
     }
+
+    .btn-wishlist:hover {
+        background: #8b0000;
+    }
+
 
     /* ========================================== */
     /* 2. PENGATURAN KHUSUS TABLET & HP           */
     /* ========================================== */
     @media (max-width: 992px) {
         .product-grid {
-            grid-template-columns: repeat(3, 1fr); /* 3 kotak di layar sedang */
+            grid-template-columns: repeat(3, 1fr); 
         }
     }
 
@@ -98,16 +126,6 @@
 
         .catalog-title { font-size: 24px !important; }
         .catalog-desc { font-size: 13px !important; }
-
-        .product-title-v2 {
-            font-size: 13px !important;
-            line-height: 1.4;
-            margin-bottom: 5px;
-            white-space: normal;
-        }
-        .product-price-v2 { font-size: 14px !important; }
-        .btn-sewa { font-size: 12px !important; padding: 8px !important; }
-        .badge-tersedia { font-size: 10px !important; padding: 4px 8px !important; }
     }
     
 
@@ -119,9 +137,6 @@
             grid-template-columns: 1fr !important; /* 1 kolom memanjang */
             gap: 15px;
         }
-        .product-title-v2 { font-size: 16px !important; }
-        .product-price-v2 { font-size: 16px !important; }
-        .btn-sewa { font-size: 14px !important; padding: 10px !important; }
     }
 </style>
 <!-- AKHIR CSS RESPONSIF -->
@@ -258,39 +273,51 @@
         <!-- ========================================== -->
         <div class="product-wrapper">
             <main class="catalog-main">
-                <div class="catalog-topbar">
-                    <div style="font-size: 14px;">Menampilkan {{ $products->firstItem() ?? 0 }}-{{ $products->lastItem() ?? 0 }} dari {{ $products->total() }} produk</div>
+                
+                <div class="catalog-topbar" style="margin-bottom: 20px;">
+                    <div style="font-size: 14px; color: #aaa;">Menampilkan {{ $products->firstItem() ?? 0 }}-{{ $products->lastItem() ?? 0 }} dari {{ $products->total() }} produk</div>
                 </div>
 
                 <div class="product-grid">
                     @forelse($products as $product)
+                        <!-- BUNGKUS UTAMA CARD -->
                         <div class="product-card-v2">
-                            <button class="btn-wishlist"><i class="fa-regular fa-heart"></i></button>
                             
+                            <!-- Tombol Wishlist -->
+                            <button class="btn-wishlist">
+                                <i class="fa-regular fa-heart"></i>
+                            </button>
+                            
+                            <!-- Foto -->
                             @if($product->images->count() > 0)
                                 <img src="{{ asset('storage/' . $product->images->first()->image_path) }}" alt="{{ $product->name }}" class="product-img-v2">
                             @else
                                 <div class="product-img-v2" style="background: #1a1a1a; display:flex; align-items:center; justify-content:center; color: #555;">No Image</div>
                             @endif
 
+                            <!-- Label -->
                             @if($product->status == 'available')
-                                <div class="badge-tersedia">TERSEDIA</div>
+                                <div class="badge-tersedia" style="background: #198754;">TERSEDIA</div>
                             @else
                                 <div class="badge-tersedia" style="background: #8b0000;">DISEWA</div>
                             @endif
 
-                            <div class="product-info-v2">
-                                <h3 class="product-title-v2">{{ $product->name }}</h3>
-                                <div class="product-cat-v2">{{ $product->category->name }}</div>
+                            <!-- BUNGKUS INFORMASI (TEKS & TOMBOL) DENGAN PADDING TEGAS -->
+                            <div style="padding: 20px; display: flex; flex-direction: column; flex-grow: 1; box-sizing: border-box;">
                                 
-                                <div class="product-price-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                    <!-- WARNA HARGA DIUBAH KE PUTIH (#ffffff) -->
-                                    <div class="product-price-v2" style="color: #ffffff; font-weight: bold;">Rp{{ number_format($product->price_per_day, 0, ',', '.') }}</div>
+                                <h3 style="margin: 0 0 5px 0; font-size: 16px; color: #fff; line-height: 1.3;">{{ $product->name }}</h3>
+                                <div style="color: #888; font-size: 12px; margin-bottom: 15px;">{{ $product->category->name }}</div>
+                                
+                                <div style="color: #ffffff; font-size: 16px; font-weight: bold; margin-bottom: 25px;">
+                                    Rp{{ number_format($product->price_per_day, 0, ',', '.') }}
                                 </div>
 
-                                <a href="{{ route('checkout', $product->id) }}" class="btn-sewa" style="text-decoration: none; display: block; text-align: center; background: #8b0000; color: white; padding: 10px; border-radius: 4px;">
-                                    <i class="fa-solid fa-cart-shopping"></i> SEWA
-                                </a>
+                                <!-- BUNGKUS TOMBOL -->
+                                <div style="margin-top: auto; width: 100%;">
+                                    <a href="{{ route('checkout', $product->id) }}" style="display: block; width: 100%; box-sizing: border-box; text-align: center; background: #8b0000; color: white; padding: 12px 0; border-radius: 6px; font-weight: bold; font-size: 14px; text-decoration: none; transition: 0.3s;" onmouseover="this.style.background='#a10000'" onmouseout="this.style.background='#8b0000'">
+                                        <i class="fa-solid fa-cart-shopping" style="margin-right: 5px;"></i> SEWA
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     @empty

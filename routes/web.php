@@ -31,23 +31,27 @@ Route::get('/success', [CheckoutController::class, 'success'])->name('checkout.s
 // ==========================================
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login')->middleware('guest');
 Route::post('/login', [AuthController::class, 'login'])->middleware('guest');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
+// TAMBAHKAN DUA BARIS INI UNTUK REGISTER
+Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register')->middleware('guest');
+Route::post('/register', [AuthController::class, 'register'])->middleware('guest');
+
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 // ==========================================
 // Admin Routes (Hanya untuk Admin yang login)
 // ==========================================
 Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
-    Route::resource('categories', CategoryController::class)->except('show');
-    Route::resource('banners', BannerController::class)->except('show');
-    
-    Route::resource('products', ProductController::class)->except('show');
-    Route::delete('products/images/{id}', [ProductController::class, 'destroyImage'])->name('products.images.destroy');
-    
-    Route::get('bestsellers', [BestSellerController::class, 'index'])->name('bestsellers.index');
-    Route::post('bestsellers/{id}/toggle', [BestSellerController::class, 'toggle'])->name('bestsellers.toggle');
-    
-    Route::resource('testimonials', TestimonialController::class)->except('show');
-    Route::resource('faqs', FaqController::class)->except('show');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+Route::resource('categories', CategoryController::class)->except('show');
+Route::resource('banners', BannerController::class)->except('show');
+
+Route::resource('products', ProductController::class)->except('show');
+Route::delete('products/images/{id}', [ProductController::class, 'destroyImage'])->name('products.images.destroy');
+
+Route::get('bestsellers', [BestSellerController::class, 'index'])->name('bestsellers.index');
+Route::post('bestsellers/{id}/toggle', [BestSellerController::class, 'toggle'])->name('bestsellers.toggle');
+
+Route::resource('testimonials', TestimonialController::class)->except('show');
+Route::resource('faqs', FaqController::class)->except('show');
 });

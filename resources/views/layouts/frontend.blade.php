@@ -35,6 +35,11 @@
             .hamburger-btn {
                 display: block; /* Munculkan tombol burger */
             }
+
+            .auth-text {
+                display: none;
+            }
+
             
             /* Pastikan kontainer navbar rata tengah/kiri-kanan */
             .navbar .container {
@@ -49,6 +54,8 @@
             /* Dorong icon user ke sebelah kiri tombol burger */
             .navbar-icons {
                 margin-left: auto; 
+                margin-right: 15px; 
+                gap: 10px !important;
             }
 
             /* Sembunyikan menu link secara default di HP */
@@ -92,11 +99,12 @@
                 gap: 15px;
                 text-align: center;
             }
+            
         }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
+   <!-- Navbar -->
     <nav class="navbar">
         <div class="container">
             <a href="{{ route('home') }}" class="navbar-brand">GOTHIC CLOTHING</a>
@@ -113,6 +121,34 @@
                 <li><a href="{{ route('contact') }}">Contact</a></li>
             </ul>
             
+            <!-- BAGIAN BARU: Tombol Auth -->
+            <div class="navbar-icons" style="display: flex; align-items: center; gap: 15px;">
+                @guest
+                    <!-- Jika belum login -->
+                    <a href="{{ route('login') }}" style="color: #fff; text-decoration: none; font-size: 14px;">
+                        <i class="fa-solid fa-user"></i> <span class="auth-text">Login</span>
+                    </a>
+                    <a href="{{ route('register') }}" style="background: #8b0000; color: #fff; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: bold;">
+                        <span class="auth-text">Daftar</span>
+                    </a>
+                @endguest
+                @auth
+                    <!-- Jika sudah login, sapa nama usernya -->
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="color: #fff; font-size: 14px; font-weight: bold;">
+                            <i class="fa-solid fa-user-check"></i> 
+                            <span class="auth-text">Halo, {{ strtok(Auth::user()->name, ' ') }}</span>
+                        </span>
+                        
+                        <form action="{{ route('logout') }}" method="POST" style="margin: 0; display: inline;">
+                            @csrf
+                            <button type="submit" title="Logout" style="background: transparent; border: 1px solid #ff4444; color: #ff4444; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 13px; transition: 0.3s;" onmouseover="this.style.background='#ff4444'; this.style.color='#fff';" onmouseout="this.style.background='transparent'; this.style.color='#ff4444';">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                            </button>
+                        </form>
+                    </div>
+                @endauth
+            </div>
 
             <!-- Tombol Burger Tambahan -->
             <button class="hamburger-btn" id="hamburgerBtn">

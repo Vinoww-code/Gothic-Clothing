@@ -1,42 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Admin - Gothic Clothing</title>
-    <style>
-        body { font-family: sans-serif; background: #111; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .login-box { background: #222; padding: 30px; border-radius: 8px; width: 100%; max-width: 400px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-        .login-box h2 { text-align: center; margin-top: 0; color: #fff; margin-bottom: 25px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-size: 14px; color: #ccc; }
-        .form-group input { width: 100%; padding: 10px; border: 1px solid #444; background: #333; color: #fff; border-radius: 4px; box-sizing: border-box; }
-        .form-group input:focus { outline: none; border-color: #8b0000; }
-        .btn { width: 100%; padding: 12px; background: #8b0000; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px; transition: 0.3s; }
-        .btn:hover { background: #660000; }
-        .error { color: #ff6b6b; font-size: 14px; margin-bottom: 15px; text-align: center; background: rgba(255, 107, 107, 0.1); padding: 10px; border-radius: 4px;}
-    </style>
-</head>
-<body>
-    <div class="login-box">
-        <h2>Admin Login</h2>
-        
-        @if($errors->any())
-            <div class="error">{{ $errors->first() }}</div>
-        @endif
+@extends('layouts.frontend')
 
+@section('content')
+<div class="container" style="min-height: 70vh; display: flex; align-items: center; justify-content: center; margin-top: 40px; margin-bottom: 40px;">
+    <div style="background: #0a0a0a; padding: 40px; border-radius: 8px; border: 1px solid #222; max-width: 400px; width: 100%; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+        
+        <h2 style="color: #fff; margin-bottom: 5px; font-family: serif; text-align: center;">LOGIN</h2>
+        <p style="color: #aaa; text-align: center; font-size: 14px; margin-bottom: 30px;">Silakan masuk untuk melanjutkan penyewaan.</p>
+
+        <!-- Tampilkan Pesan Error Jika Ada (Misal: Password Salah) -->
+        @if ($errors->any())
+            <div style="background: rgba(139, 0, 0, 0.2); border: 1px solid #8b0000; color: #ff4444; padding: 10px; border-radius: 4px; margin-bottom: 20px; font-size: 13px;">
+                <ul style="margin: 0; padding-left: 20px;">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        
         <form action="{{ route('login') }}" method="POST">
             @csrf
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" name="email" value="{{ old('email') }}" required autofocus>
+            
+            <!-- Input Email -->
+            <div style="margin-bottom: 20px;">
+                <label style="color: #bbb; font-size: 12px; font-weight: bold; letter-spacing: 1px; display: block; margin-bottom: 5px;">EMAIL</label>
+                <input type="email" name="email" value="{{ old('email') }}" required autofocus
+                       style="width: 100%; padding: 12px; background: #111; border: 1px solid #333; color: white; border-radius: 4px; outline: none; transition: 0.3s; box-sizing: border-box;"
+                       onfocus="this.style.borderColor='#8b0000'" onblur="this.style.borderColor='#333'">
             </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password" required>
+
+            <!-- Input Password -->
+            <div style="margin-bottom: 25px;">
+                <label style="color: #bbb; font-size: 12px; font-weight: bold; letter-spacing: 1px; display: block; margin-bottom: 5px;">PASSWORD</label>
+                <input type="password" name="password" required 
+                       style="width: 100%; padding: 12px; background: #111; border: 1px solid #333; color: white; border-radius: 4px; outline: none; transition: 0.3s; box-sizing: border-box;"
+                       onfocus="this.style.borderColor='#8b0000'" onblur="this.style.borderColor='#333'">
             </div>
-            <button type="submit" class="btn">Login</button>
+
+            <!-- Tombol Login -->
+            <button type="submit" style="width: 100%; background: #8b0000; color: white; border: none; font-weight: bold; padding: 12px; border-radius: 4px; font-size: 14px; letter-spacing: 1px; cursor: pointer; transition: 0.3s;"
+                    onmouseover="this.style.background='#a10000'" onmouseout="this.style.background='#8b0000'">
+                MASUK
+            </button>
+            
+            <p style="text-align: center; color: #888; font-size: 13px; margin-top: 20px;">
+                Belum punya akun? <a href="{{ route('register') }}" style="color: #ff4444; text-decoration: none; font-weight: bold;">Daftar di sini</a>
+            </p>
         </form>
     </div>
-</body>
-</html>
+</div>
+@endsection
