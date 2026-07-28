@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -79,7 +79,6 @@
             .navbar-nav.active {
                 display: flex;
             }
-            /* TAMBAHKAN KODE INI KE DALAM @media (max-width: 768px) DI FILE frontend.blade.php */
 
             .footer-grid {
                 display: flex !important;
@@ -89,7 +88,7 @@
 
             .footer-col {
                 width: 100% !important;
-                text-align: left; /* Sesuaikan jika ingin rata tengah (center) */
+                text-align: left;
             }
 
             /* Merapikan bagian bawah footer (Copyright & Link) di HP */
@@ -111,14 +110,14 @@
             
             <!-- Tambahkan ID 'navLinks' di sini -->
             <ul class="navbar-nav" id="navLinks">
-                <li><a href="{{ route('home') }}">Home</a></li>
-                <li><a href="{{ route('collection') }}">Collection</a></li>
-                <li><a href="{{ route('accessories') }}">Accessories</a></li>
-                <li><a href="{{ route('home') }}#bestseller">Best Seller</a></li>
-                <li><a href="{{ route('home') }}#how-to-rent">How To Rent</a></li>
-                <li><a href="{{ route('home') }}#testimonials">Testimonials</a></li>
+                <li><a href="{{ route('home') }}">Beranda</a></li>
+                <li><a href="{{ route('collection') }}">Koleksi</a></li>
+                <li><a href="{{ route('accessories') }}">Aksesoris</a></li>
+                <li><a href="{{ route('home') }}#bestseller">Terlaris</a></li>
+                <li><a href="{{ route('home') }}#how-to-rent">Cara Sewa</a></li>
+                <li><a href="{{ route('home') }}#testimonials">Testimoni</a></li>
                 <li><a href="{{ route('home') }}#faq">FAQ</a></li>
-                <li><a href="{{ route('contact') }}">Contact</a></li>
+                <li><a href="{{ route('contact') }}">Kontak</a></li>
             </ul>
             
             <!-- BAGIAN BARU: Tombol Auth -->
@@ -126,7 +125,7 @@
                 @guest
                     <!-- Jika belum login -->
                     <a href="{{ route('login') }}" style="color: #fff; text-decoration: none; font-size: 14px;">
-                        <i class="fa-solid fa-user"></i> <span class="auth-text">Login</span>
+                        <i class="fa-solid fa-user"></i> <span class="auth-text">Masuk</span>
                     </a>
                     <a href="{{ route('register') }}" style="background: #8b0000; color: #fff; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 14px; font-weight: bold;">
                         <span class="auth-text">Daftar</span>
@@ -142,7 +141,7 @@
                         
                         <form action="{{ route('logout') }}" method="POST" style="margin: 0; display: inline;">
                             @csrf
-                            <button type="submit" title="Logout" style="background: transparent; border: 1px solid #ff4444; color: #ff4444; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 13px; transition: 0.3s;" onmouseover="this.style.background='#ff4444'; this.style.color='#fff';" onmouseout="this.style.background='transparent'; this.style.color='#ff4444';">
+                            <button type="submit" title="Keluar" style="background: transparent; border: 1px solid #ff4444; color: #ff4444; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 13px; transition: 0.3s;" onmouseover="this.style.background='#ff4444'; this.style.color='#fff';" onmouseout="this.style.background='transparent'; this.style.color='#ff4444';">
                                 <i class="fa-solid fa-right-from-bracket"></i>
                             </button>
                         </form>
@@ -168,7 +167,7 @@
             <div class="footer-grid">
                 <div class="footer-col">
                     <a href="#" class="footer-logo">GOTHIC CLOTHING</a>
-                    <p>Premium Gothic Costume & Accessories<br>Rental for your special moments.</p>
+                    <p>Penyewaan Kostum & Aksesoris Gothic Premium<br>untuk momen spesial Anda.</p>
                     <div style="margin-top: 15px; display:flex; gap:15px; font-size: 18px;">
                         <a href="#"><i class="fab fa-instagram"></i></a>
                         <a href="#"><i class="fab fa-tiktok"></i></a>
@@ -177,37 +176,37 @@
                     </div>
                 </div>
                 <div class="footer-col">
-                    <h4 class="footer-title">Quick Links</h4>
+                    <h4 class="footer-title">Tautan Cepat</h4>
                     <ul class="footer-links">
-                        <li><a href="#">Home</a></li>
-                        <li><a href="{{ route('collection') }}">Collection</a></li>
-                        <li><a href="{{ route('accessories') }}">Accessories</a></li>
-                        <li><a href="{{ route('home') }}#bestseller">Best Seller</a></li>
+                        <li><a href="#">Beranda</a></li>
+                        <li><a href="{{ route('collection') }}">Koleksi</a></li>
+                        <li><a href="{{ route('accessories') }}">Aksesoris</a></li>
+                        <li><a href="{{ route('home') }}#bestseller">Terlaris</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
-                    <h4 class="footer-title">Categories</h4>
+                    <h4 class="footer-title">Kategori</h4>
                     <ul class="footer-links">
-                        <li><a href="#">Costumes</a></li>
-                        <li><a href="#">Accessories</a></li>
-                        <li><a href="#">New Arrivals</a></li>
+                        <li><a href="#">Kostum</a></li>
+                        <li><a href="#">Aksesoris</a></li>
+                        <li><a href="#">Terbaru</a></li>
                         <li><a href="#">Victorian</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
-                    <h4 class="footer-title">Newsletter</h4>
-                    <p>Subscribe to get special offers and latest updates.</p>
+                    <h4 class="footer-title">Berlangganan</h4>
+                    <p>Dapatkan penawaran khusus dan informasi terbaru langsung di email Anda.</p>
                     <form action="#" class="newsletter-form">
-                        <input type="email" placeholder="Your email address" required>
-                        <button type="submit">Subscribe</button>
+                        <input type="email" placeholder="Alamat email Anda" required>
+                        <button type="submit">Langganan</button>
                     </form>
                 </div>
             </div>
             <div class="footer-bottom">
-                <div>&copy; {{ date('Y') }} Gothic Clothing. All rights reserved.</div>
+                <div>&copy; {{ date('Y') }} Gothic Clothing. Hak Cipta Dilindungi.</div>
                 <div class="footer-bottom-links">
-                    <a href="#">Privacy Policy</a>
-                    <a href="#">Terms & Conditions</a>
+                    <a href="#">Kebijakan Privasi</a>
+                    <a href="#">Syarat & Ketentuan</a>
                 </div>
             </div>
         </div>

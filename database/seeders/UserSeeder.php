@@ -10,10 +10,13 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
-            'name' => 'Admin',
-            'email' => 'admin@gothicclothing.com',
-            'password' => Hash::make('password'),
-        ]);
+        User::updateOrCreate(
+            ['email' => 'punyadmin@gothicclothing.com'],
+            [
+                'name'     => 'Admin',
+                'role'     => 'admin', // Menandai akun ini sebagai Admin
+                'password' => Hash::make('HanyaAdmin321'), // Password-nya adalah "password"
+            ]
+        );
     }
 }
