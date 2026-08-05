@@ -34,7 +34,7 @@
         </div>
 
         <div class="form-group">
-            <label for="button_link">Button Link (URL)</label>
+            <label for="button_link">Pelajari Lebih Lanjut</label>
             <input type="text" name="button_link" id="button_link" class="form-control" value="{{ old('button_link', $banner->button_link) }}">
         </div>
 
