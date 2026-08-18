@@ -29,10 +29,12 @@ Route::get('/collection', [CatalogController::class, 'index'])->defaults('type',
 Route::get('/accessories', [CatalogController::class, 'index'])->defaults('type', 'accessories')->name('accessories');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 
-// Checkout Routes
-Route::get('/checkout/{product}', [CheckoutController::class, 'index'])->name('checkout');
-Route::post('/checkout/{product}', [CheckoutController::class, 'process'])->name('checkout.process');
-Route::get('/success', [CheckoutController::class, 'success'])->name('checkout.success');
+// Protected Checkout & Order Routes (Requires Authentication)
+Route::middleware('auth')->group(function () {
+    Route::get('/checkout/{product}', [CheckoutController::class, 'index'])->name('checkout');
+    Route::post('/checkout/{product}', [CheckoutController::class, 'process'])->name('checkout.process');
+    Route::get('/checkout/success/{order_code}', [CheckoutController::class, 'success'])->name('checkout.success');
+});
 
 
 /*

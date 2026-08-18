@@ -24,8 +24,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             
-            // Sekarang akan langsung dilempar ke halaman Home pengunjung!
-            return redirect()->route('home')->with('success', 'Berhasil masuk!'); 
+            return redirect()->intended(route('home'))->with('success', 'Berhasil masuk! Melanjutkan sesi Anda...'); 
         }
 
         return back()->withErrors([
@@ -40,13 +39,11 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users', 
             'password' => 'required|string|min:8|confirmed', 
         ]);
-
 
         $user = User::create([
             'name' => $request->name,
@@ -56,7 +53,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-       return redirect()->route('home')->with('success', 'Pendaftaran berhasil! Selamat datang, ' . $user->name);
+        return redirect()->intended(route('home'))->with('success', 'Pendaftaran berhasil! Selamat datang, ' . $user->name);
     }
 
     public function logout(Request $request)

@@ -193,6 +193,11 @@
                         <div class="product-category">{{ $product->category->name }}</div>
                         <h3 class="product-name">{{ $product->name }}</h3>
                         <div class="product-price">Rp {{ number_format($product->price_per_day, 0, ',', '.') }} / Hari</div>
+                        <div style="margin-top: 15px;">
+                            <a href="{{ route('checkout', $product->id) }}" style="display: block; text-align: center; background: #8b0000; color: white; padding: 10px 0; border-radius: 4px; font-weight: bold; font-size: 13px; text-decoration: none; transition: 0.3s;" onmouseover="this.style.background='#a10000'" onmouseout="this.style.background='#8b0000'">
+                                <i class="fa-solid fa-cart-shopping" style="margin-right: 4px;"></i> SEWA SEKARANG
+                            </a>
+                        </div>
                     </div>
                 </div>
             @empty

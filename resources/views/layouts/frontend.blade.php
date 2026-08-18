@@ -158,6 +158,30 @@
 
     <!-- Main Content -->
     <main style="margin-top: 75px; min-height: 50vh;">
+        <!-- Global Flash Notifications -->
+        @if(session('success') || session('error') || session('info') || session('status'))
+            <div class="container" style="padding-top: 20px;">
+                @if(session('success'))
+                    <div style="background: rgba(25, 135, 84, 0.2); border: 1px solid #198754; color: #75b798; padding: 12px 18px; border-radius: 6px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; font-size: 14px;">
+                        <span><i class="fa-solid fa-circle-check" style="margin-right: 8px;"></i> {{ session('success') }}</span>
+                        <button type="button" onclick="this.parentElement.remove()" style="background: none; border: none; color: #75b798; cursor: pointer; font-size: 16px;">&times;</button>
+                    </div>
+                @endif
+                @if(session('error'))
+                    <div style="background: rgba(139, 0, 0, 0.25); border: 1px solid #8b0000; color: #ff6b6b; padding: 12px 18px; border-radius: 6px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; font-size: 14px;">
+                        <span><i class="fa-solid fa-triangle-exclamation" style="margin-right: 8px;"></i> {{ session('error') }}</span>
+                        <button type="button" onclick="this.parentElement.remove()" style="background: none; border: none; color: #ff6b6b; cursor: pointer; font-size: 16px;">&times;</button>
+                    </div>
+                @endif
+                @if(session('info') || session('status'))
+                    <div style="background: rgba(13, 110, 253, 0.2); border: 1px solid #0d6efd; color: #6ea8fe; padding: 12px 18px; border-radius: 6px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; font-size: 14px;">
+                        <span><i class="fa-solid fa-circle-info" style="margin-right: 8px;"></i> {{ session('info') ?? session('status') }}</span>
+                        <button type="button" onclick="this.parentElement.remove()" style="background: none; border: none; color: #6ea8fe; cursor: pointer; font-size: 16px;">&times;</button>
+                    </div>
+                @endif
+            </div>
+        @endif
+
         @yield('content')
     </main>
 
