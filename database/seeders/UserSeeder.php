@@ -11,7 +11,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         User::updateOrCreate(
-            ['email' => 'punyadmin@gothicclothing.com'],
+            ['email' => 'punyadmin@gothicclothing.com'], 
             [
                 'name'     => 'Admin',
                 'role'     => 'admin', // Menandai akun ini sebagai Admin
