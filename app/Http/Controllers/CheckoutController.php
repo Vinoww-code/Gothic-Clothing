@@ -121,4 +121,23 @@ class CheckoutController extends Controller
 
         return view('frontend.success', compact('order'));
     }
+
+    /**
+     * Realtime JSON status check for order tracking.
+     */
+    public function checkStatus(string $order_code)
+    {
+        $order = Order::where('order_code', $order_code)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        return response()->json([
+            'order_code' => $order->order_code,
+            'payment_status' => $order->payment_status,
+            'order_status' => $order->order_status,
+            'payment_status_label' => strtoupper($order->payment_status),
+            'order_status_label' => strtoupper($order->order_status),
+            'updated_at' => $order->updated_at ? $order->updated_at->timezone('Asia/Jakarta')->format('d M Y, H:i:s') : null,
+        ]);
+    }
 }

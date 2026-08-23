@@ -21,11 +21,16 @@
         font-weight: bold;
         letter-spacing: 0.5px;
         text-transform: uppercase;
+        transition: all 0.3s ease;
     }
 
     .status-pending { background: rgba(255, 193, 7, 0.2); color: #ffc107; border: 1px solid #ffc107; }
-    .status-paid { background: rgba(25, 135, 84, 0.2); color: #198754; border: 1px solid #198754; }
-    .status-confirmed { background: rgba(13, 110, 253, 0.2); color: #0d6efd; border: 1px solid #0d6efd; }
+    .status-paid { background: rgba(25, 135, 84, 0.2); color: #2ecc71; border: 1px solid #2ecc71; }
+    .status-failed { background: rgba(220, 53, 69, 0.2); color: #e74c3c; border: 1px solid #e74c3c; }
+    .status-confirmed { background: rgba(13, 110, 253, 0.2); color: #3498db; border: 1px solid #3498db; }
+    .status-processing { background: rgba(23, 162, 184, 0.2); color: #17a2b8; border: 1px solid #17a2b8; }
+    .status-completed { background: rgba(40, 167, 69, 0.2); color: #28a745; border: 1px solid #28a745; }
+    .status-cancelled { background: rgba(108, 117, 125, 0.2); color: #6c757d; border: 1px solid #6c757d; }
 
     .detail-card {
         background: #0a0a0a;
@@ -39,7 +44,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 8px 0;
+        padding: 10px 0;
         border-bottom: 1px solid #1a1a1a;
         font-size: 14px;
     }
@@ -65,6 +70,33 @@
         border-color: #8b0000;
         color: #fff;
     }
+
+    .live-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        color: #4ade80;
+        background: rgba(74, 222, 128, 0.1);
+        padding: 3px 8px;
+        border-radius: 12px;
+        border: 1px solid rgba(74, 222, 128, 0.3);
+    }
+
+    .live-dot {
+        width: 7px;
+        height: 7px;
+        background-color: #4ade80;
+        border-radius: 50%;
+        box-shadow: 0 0 8px #4ade80;
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(0.95); opacity: 0.7; }
+        50% { transform: scale(1.3); opacity: 1; }
+        100% { transform: scale(0.95); opacity: 0.7; }
+    }
 </style>
 
 <div class="container" style="min-height: 70vh; margin-top: 20px; margin-bottom: 50px;">
@@ -76,7 +108,10 @@
                 <i class="fa-solid fa-check"></i>
             </div>
             <h2 style="margin: 0 0 5px 0; font-family: serif; color: #fff;">PESANAN BERHASIL DICATAT</h2>
-            <p style="margin: 0; color: #aaa; font-size: 13px;">Silakan selesaikan pembayaran sesuai instruksi di bawah ini.</p>
+            <p style="margin: 0 0 10px 0; color: #aaa; font-size: 13px;">Silakan selesaikan pembayaran sesuai instruksi di bawah ini.</p>
+            <div class="live-indicator">
+                <span class="live-dot"></span> Realtime Live Tracking
+            </div>
         </div>
 
         <!-- Order Information Summary -->
@@ -90,18 +125,18 @@
             </div>
             <div class="detail-row">
                 <span style="color: #888;">Tanggal Pesanan</span>
-                <span style="color: #ddd;">{{ $order->created_at->format('d M Y, H:i') }} WIB</span>
+                <span style="color: #ddd;">{{ $order->created_at ? $order->created_at->timezone('Asia/Jakarta')->format('d M Y, H:i') . ' WIB' : now()->timezone('Asia/Jakarta')->format('d M Y, H:i') . ' WIB' }}</span>
             </div>
             <div class="detail-row">
                 <span style="color: #888;">Status Pembayaran</span>
-                <span class="badge-status {{ $order->payment_status === 'paid' ? 'status-paid' : 'status-pending' }}">
-                    {{ strtoupper($order->payment_status) }}
+                <span id="paymentStatusBadge" class="badge-status status-{{ strtolower($order->payment_status ?? 'pending') }}">
+                    {{ strtoupper($order->payment_status ?? 'pending') }}
                 </span>
             </div>
             <div class="detail-row">
                 <span style="color: #888;">Status Pesanan</span>
-                <span class="badge-status status-confirmed">
-                    {{ strtoupper($order->order_status) }}
+                <span id="orderStatusBadge" class="badge-status status-{{ strtolower($order->order_status ?? 'pending') }}">
+                    {{ strtoupper($order->order_status ?? 'pending') }}
                 </span>
             </div>
         </div>
@@ -112,13 +147,13 @@
                 <i class="fa-solid fa-shirt" style="margin-right: 6px; color: #8b0000;"></i> Rincian Produk Sewa
             </h4>
             <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px;">
-                @if($order->product->images->count() > 0)
+                @if($order->product && $order->product->images && $order->product->images->count() > 0)
                     <img src="{{ asset('storage/' . $order->product->images->first()->image_path) }}" alt="{{ $order->product->name }}" style="width: 60px; height: 60px; border-radius: 6px; object-fit: cover; border: 1px solid #333;">
                 @else
                     <div style="width: 60px; height: 60px; background: #222; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #666;"><i class="fa-solid fa-shirt"></i></div>
                 @endif
                 <div style="flex: 1;">
-                    <div style="font-weight: bold; color: #fff; font-size: 15px;">{{ $order->product->name }}</div>
+                    <div style="font-weight: bold; color: #fff; font-size: 15px;">{{ $order->product->name ?? 'Produk Sewa' }}</div>
                     <div style="color: #888; font-size: 13px;">Tarif: Rp{{ number_format($order->price_per_day, 0, ',', '.') }} / hari</div>
                 </div>
             </div>
@@ -149,7 +184,7 @@
         </div>
 
         <!-- Payment Instructions Box -->
-        <div style="background: #0a0a0a; border: 1px solid #333; border-radius: 8px; padding: 25px; text-align: center; margin-bottom: 25px;">
+        <div id="paymentBox" style="background: #0a0a0a; border: 1px solid #333; border-radius: 8px; padding: 25px; text-align: center; margin-bottom: 25px;">
             <h4 style="margin: 0 0 15px 0; color: #fff; font-size: 16px;">
                 <i class="fa-solid fa-credit-card" style="margin-right: 6px; color: #8b0000;"></i> Instruksi Pembayaran ({{ strtoupper($order->payment_method) }})
             </h4>
@@ -209,5 +244,69 @@
             alert('Kode pesanan ' + text + ' berhasil disalin!');
         });
     }
+
+    // ==========================================
+    // REALTIME ORDER STATUS POLLING (Setiap 3 detik)
+    // ==========================================
+    const orderCode = "{{ $order->order_code }}";
+    const statusUrl = "{{ route('checkout.status', $order->order_code) }}";
+    let lastPaymentStatus = "{{ $order->payment_status }}";
+    let lastOrderStatus = "{{ $order->order_status }}";
+
+    function updateBadge(elementId, statusText, statusClass) {
+        const el = document.getElementById(elementId);
+        if (el) {
+            el.className = 'badge-status ' + statusClass;
+            el.innerText = statusText.toUpperCase();
+        }
+    }
+
+    function checkOrderStatusRealtime() {
+        fetch(statusUrl, {
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Network error');
+            return response.json();
+        })
+        .then(data => {
+            // Update Payment Status
+            if (data.payment_status) {
+                const pClass = 'status-' + data.payment_status.toLowerCase();
+                updateBadge('paymentStatusBadge', data.payment_status, pClass);
+                
+                // Jika berubah jadi paid
+                if (data.payment_status === 'paid' && lastPaymentStatus !== 'paid') {
+                    const payBox = document.getElementById('paymentBox');
+                    if (payBox) {
+                        payBox.innerHTML = `
+                            <div style="background: rgba(25, 135, 84, 0.15); border: 1px solid #198754; padding: 20px; border-radius: 8px; color: #2ecc71;">
+                                <i class="fa-solid fa-circle-check" style="font-size: 32px; margin-bottom: 10px;"></i>
+                                <h3 style="margin: 0 0 5px 0; color: #fff;">PEMBAYARAN DIVERIFIKASI!</h3>
+                                <p style="margin: 0; font-size: 13px; color: #ccc;">Terima kasih, pembayaran Anda telah berhasil kami terima.</p>
+                            </div>
+                        `;
+                    }
+                }
+                lastPaymentStatus = data.payment_status;
+            }
+
+            // Update Order Status
+            if (data.order_status) {
+                const oClass = 'status-' + data.order_status.toLowerCase();
+                updateBadge('orderStatusBadge', data.order_status, oClass);
+                lastOrderStatus = data.order_status;
+            }
+        })
+        .catch(err => {
+            console.debug('Realtime sync waiting...', err);
+        });
+    }
+
+    // Polling interval setiap 3 detik secara background
+    setInterval(checkOrderStatusRealtime, 3000);
 </script>
 @endsection
