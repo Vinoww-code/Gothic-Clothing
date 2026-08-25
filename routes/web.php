@@ -7,6 +7,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserOrderController;
+use App\Http\Controllers\DocumentController;
 
 // Controller Admin
 use App\Http\Controllers\Admin\AdminAuthController;
@@ -17,6 +19,8 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\BestSellerController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\FaqController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\FinanceController;
 
 
 /*
@@ -27,14 +31,18 @@ use App\Http\Controllers\Admin\FaqController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/collection', [CatalogController::class, 'index'])->defaults('type', 'collection')->name('collection');
 Route::get('/accessories', [CatalogController::class, 'index'])->defaults('type', 'accessories')->name('accessories');
+Route::get('/product/{slug}', [CatalogController::class, 'show'])->name('product.show');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 
-// Protected Checkout & Order Routes (Requires Authentication)
+// Protected Customer Orders, Checkout & Document Routes (Requires Authentication)
 Route::middleware('auth')->group(function () {
+    Route::get('/my-orders', [UserOrderController::class, 'index'])->name('my.orders');
+    Route::post('/my-orders/{order}/cancel', [UserOrderController::class, 'cancel'])->name('my.orders.cancel');
     Route::get('/checkout/{product}', [CheckoutController::class, 'index'])->name('checkout');
     Route::post('/checkout/{product}', [CheckoutController::class, 'process'])->name('checkout.process');
     Route::get('/checkout/success/{order_code}', [CheckoutController::class, 'success'])->name('checkout.success');
     Route::get('/checkout/status/{order_code}', [CheckoutController::class, 'checkStatus'])->name('checkout.status');
+    Route::get('/documents/order/{order}/{type}', [DocumentController::class, 'serveOrderDocument'])->name('documents.order');
 });
 
 
@@ -74,8 +82,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
 
-    // Dashboard Admin
+    // Dashboard & Laporan Keuangan
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/finance', [FinanceController::class, 'index'])->name('finance.index');
+
+    // Manajemen Pesanan / Order Management
+    Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
+    Route::get('orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
+    Route::patch('orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
 
     // Manajemen Kategori & Banner
     Route::resource('categories', CategoryController::class)->except('show');

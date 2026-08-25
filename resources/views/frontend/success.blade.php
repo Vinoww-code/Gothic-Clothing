@@ -159,8 +159,14 @@
             </div>
 
             <div class="detail-row">
-                <span style="color: #888;">Durasi Sewa</span>
-                <span style="color: #ddd;">{{ $order->rental_days }} Hari</span>
+                <span style="color: #888;">Periode Sewa</span>
+                <span style="color: #ddd;">
+                    @if($order->start_date && $order->end_date)
+                        {{ $order->start_date->format('d M Y') }} s/d {{ $order->end_date->format('d M Y') }} ({{ $order->rental_days }} Hari)
+                    @else
+                        {{ $order->rental_days }} Hari
+                    @endif
+                </span>
             </div>
             <div class="detail-row">
                 <span style="color: #888;">Metode Pengambilan</span>
@@ -226,13 +232,68 @@
 
         <!-- Action Buttons -->
         <div style="display: flex; gap: 12px; flex-direction: column;">
-            <a href="{{ route('collection') }}" style="display: block; text-align: center; width: 100%; box-sizing: border-box; padding: 14px; background: #8b0000; color: #fff; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 14px; letter-spacing: 0.5px; transition: 0.3s;" onmouseover="this.style.background='#a10000'" onmouseout="this.style.background='#8b0000'">
-                <i class="fa-solid fa-shirt" style="margin-right: 6px;"></i> LIHAT KOLEKSI LAINNYA
+            <a href="{{ route('my.orders') }}" style="display: block; text-align: center; width: 100%; box-sizing: border-box; padding: 14px; background: #8b0000; color: #fff; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 14px; letter-spacing: 0.5px; transition: 0.3s;" onmouseover="this.style.background='#a10000'" onmouseout="this.style.background='#8b0000'">
+                <i class="fa-solid fa-clock-rotate-left" style="margin-right: 6px;"></i> LIHAT RIWAYAT PESANAN SAYA
             </a>
-            <a href="{{ route('home') }}" style="display: block; text-align: center; width: 100%; box-sizing: border-box; padding: 12px; background: transparent; border: 1px solid #444; color: #aaa; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 14px; transition: 0.3s;" onmouseover="this.style.borderColor='#888'; this.style.color='#fff';" onmouseout="this.style.borderColor='#444'; this.style.color='#aaa';">
-                KEMBALI KE BERANDA
+
+            @if($order->isCancellable())
+                <button type="button" onclick="openCancelModal()" style="display: block; text-align: center; width: 100%; box-sizing: border-box; padding: 12px; background: transparent; border: 1px solid #dc2626; color: #f87171; border-radius: 6px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.3s;" onmouseover="this.style.background='#dc2626'; this.style.color='#fff';" onmouseout="this.style.background='transparent'; this.style.color='#f87171';">
+                    <i class="fa-solid fa-ban" style="margin-right: 6px;"></i> BATALKAN PESANAN INI
+                </button>
+            @endif
+
+            <a href="{{ route('collection') }}" style="display: block; text-align: center; width: 100%; box-sizing: border-box; padding: 12px; background: transparent; border: 1px solid #444; color: #cbd5e1; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 14px; transition: 0.3s;" onmouseover="this.style.borderColor='#888'; this.style.color='#fff';" onmouseout="this.style.borderColor='#444'; this.style.color='#cbd5e1';">
+                <i class="fa-solid fa-shirt" style="margin-right: 6px;"></i> JELAJAHI KOLEKSI LAINNYA
+            </a>
+            <a href="{{ route('home') }}" style="display: block; text-align: center; width: 100%; box-sizing: border-box; padding: 10px; background: transparent; border: none; color: #777; text-decoration: none; font-size: 13px; transition: 0.3s;" onmouseover="this.style.color='#aaa';" onmouseout="this.style.color='#777';">
+                Kembali ke Beranda
             </a>
         </div>
+
+        @if($order->isCancellable())
+            <!-- Modal Pembatalan -->
+            <div id="cancelSuccessModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 20px;">
+                <div style="background: #161922; border: 1px solid #334155; border-radius: 8px; width: 100%; max-width: 480px; padding: 25px;" onclick="event.stopPropagation()">
+                    <h3 style="margin: 0 0 12px; color: #fff; font-size: 18px;"><i class="fa-solid fa-triangle-exclamation" style="color: #f87171;"></i> Batalkan Pesanan</h3>
+                    <p style="color: #cbd5e1; font-size: 14px; line-height: 1.6; margin-bottom: 15px;">
+                        @if($order->payment_status === 'paid')
+                            Pesanan Anda telah terbayar (belum dikemas). Harap masukkan alasan pembatalan agar tim kami dapat memproses koordinasi pembatalan.
+                        @else
+                            Apakah Anda yakin ingin membatalkan pesanan ini? Kostum akan segera dilepaskan dan kembali tersedia untuk disewa.
+                        @endif
+                    </p>
+
+                    <form method="POST" action="{{ route('my.orders.cancel', $order->id) }}">
+                        @csrf
+                        @if($order->payment_status === 'paid')
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px;">
+                                    Alasan Pembatalan <span style="color: #f87171;">* (Wajib Diisi)</span>
+                                </label>
+                                <textarea name="cancellation_reason" rows="3" required style="width: 100%; padding: 10px; background: #0a0a0a; border: 1px solid #334155; border-radius: 6px; color: #fff; font-size: 13px; box-sizing: border-box;" placeholder="Contoh: Salah pilih ukuran / acara dibatalkan..."></textarea>
+                            </div>
+                        @endif
+
+                        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                            <button type="button" onclick="closeCancelModal()" style="background: transparent; border: 1px solid #444; color: #cbd5e1; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Tutup</button>
+                            <button type="submit" style="background: #dc2626; color: #fff; border: none; padding: 8px 18px; border-radius: 4px; font-weight: bold; cursor: pointer;">
+                                <i class="fa-solid fa-ban"></i> Ya, Batalkan Pesanan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <script>
+                function openCancelModal() {
+                    const m = document.getElementById('cancelSuccessModal');
+                    if (m) { m.style.display = 'flex'; }
+                }
+                function closeCancelModal() {
+                    const m = document.getElementById('cancelSuccessModal');
+                    if (m) { m.style.display = 'none'; }
+                }
+            </script>
+        @endif
 
     </div>
 </div>

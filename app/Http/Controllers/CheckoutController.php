@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Product;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -44,11 +45,13 @@ class CheckoutController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'ttl' => ['required', 'string', 'max:255'],
             'gender' => ['required', 'string', 'max:50'],
+            'start_date' => ['nullable', 'date'],
+            'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
+            'rental_days' => ['nullable', 'integer', 'min:1', 'max:30'],
             'delivery_method' => ['required', 'in:pickup,delivery'],
             'whatsapp' => ['required_if:delivery_method,delivery', 'nullable', 'string', 'max:25'],
             'address' => ['required_if:delivery_method,delivery', 'nullable', 'string', 'max:500'],
             'payment_method' => ['required', 'in:qris,dana,ovo,cod'],
-            'rental_days' => ['nullable', 'integer', 'min:1', 'max:30'],
             'notes' => ['nullable', 'string', 'max:500'],
         ], [
             'foto_ktp.required' => 'Foto KTP wajib diunggah.',
@@ -59,6 +62,7 @@ class CheckoutController extends Controller
             'foto_selfie.max' => 'Ukuran foto selfie maksimal 3MB.',
             'nik.required' => 'NIK KTP wajib diisi.',
             'name.required' => 'Nama lengkap sesuai KTP wajib diisi.',
+            'end_date.after_or_equal' => 'Tanggal selesai sewa tidak boleh sebelum tanggal mulai sewa.',
             'delivery_method.required' => 'Pilih metode pengambilan barang.',
             'whatsapp.required_if' => 'Nomor WhatsApp wajib diisi jika memilih pengantaran ke rumah.',
             'address.required_if' => 'Alamat pengiriman wajib diisi jika memilih pengantaran ke rumah.',
@@ -67,13 +71,18 @@ class CheckoutController extends Controller
 
         // 3. File storage & Database transaction
         $order = DB::transaction(function () use ($request, $product) {
-            // Save uploaded images to storage/app/public/orders/...
-            $ktpPath = $request->file('foto_ktp')->store('orders/ktp', 'public');
-            $selfiePath = $request->file('foto_selfie')->store('orders/selfie', 'public');
+            // Save uploaded images to private storage (storage/app/orders/...)
+            $ktpPath = $request->file('foto_ktp')->store('orders/ktp', 'local');
+            $selfiePath = $request->file('foto_selfie')->store('orders/selfie', 'local');
 
-            $rentalDays = (int) $request->input('rental_days', 1);
-            if ($rentalDays < 1) {
-                $rentalDays = 1;
+            $startDate = $request->filled('start_date') ? Carbon::parse($request->input('start_date')) : Carbon::today();
+            
+            if ($request->filled('end_date')) {
+                $endDate = Carbon::parse($request->input('end_date'));
+                $rentalDays = max(1, $startDate->diffInDays($endDate) + 1);
+            } else {
+                $rentalDays = max(1, (int) $request->input('rental_days', 1));
+                $endDate = (clone $startDate)->addDays($rentalDays - 1);
             }
 
             $pricePerDay = $product->price_per_day;
@@ -82,7 +91,7 @@ class CheckoutController extends Controller
             // Generate a secure unique order code: GTC-YYYYMMDD-XXXXX
             $orderCode = 'GTC-' . date('Ymd') . '-' . strtoupper(Str::random(5));
 
-            return Order::create([
+            $order = Order::create([
                 'order_code' => $orderCode,
                 'user_id' => Auth::id(),
                 'product_id' => $product->id,
@@ -100,9 +109,16 @@ class CheckoutController extends Controller
                 'order_status' => 'pending',
                 'price_per_day' => $pricePerDay,
                 'rental_days' => $rentalDays,
+                'start_date' => $startDate->toDateString(),
+                'end_date' => $endDate->toDateString(),
                 'total_amount' => $totalAmount,
                 'notes' => $request->notes,
             ]);
+
+            // Otomatis ubah status produk menjadi 'rented' (Sedang Disewa)
+            $product->update(['status' => 'rented']);
+
+            return $order;
         });
 
         return redirect()->route('checkout.success', $order->order_code)

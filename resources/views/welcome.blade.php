@@ -184,18 +184,29 @@
                     @endif
                     
                     @if($product->images->count() > 0)
-                        <img src="{{ asset('storage/' . $product->images->first()->image_path) }}" alt="{{ $product->name }}" class="product-img">
+                        <a href="{{ route('product.show', $product->slug) }}">
+                            <img src="{{ asset('storage/' . $product->images->first()->image_path) }}" alt="{{ $product->name }}" class="product-img">
+                        </a>
                     @else
-                        <div class="product-img" style="background: #111; display:flex; align-items:center; justify-content:center; color:#555;">Tidak Ada Gambar</div>
+                        <a href="{{ route('product.show', $product->slug) }}">
+                            <div class="product-img" style="background: #111; display:flex; align-items:center; justify-content:center; color:#555;">Tidak Ada Gambar</div>
+                        </a>
                     @endif
                     
                     <div class="product-info">
                         <div class="product-category">{{ $product->category->name }}</div>
-                        <h3 class="product-name">{{ $product->name }}</h3>
+                        <h3 class="product-name">
+                            <a href="{{ route('product.show', $product->slug) }}" style="color: #fff; text-decoration: none;">
+                                {{ $product->name }}
+                            </a>
+                        </h3>
                         <div class="product-price">Rp {{ number_format($product->price_per_day, 0, ',', '.') }} / Hari</div>
-                        <div style="margin-top: 15px;">
-                            <a href="{{ route('checkout', $product->id) }}" style="display: block; text-align: center; background: #8b0000; color: white; padding: 10px 0; border-radius: 4px; font-weight: bold; font-size: 13px; text-decoration: none; transition: 0.3s;" onmouseover="this.style.background='#a10000'" onmouseout="this.style.background='#8b0000'">
-                                <i class="fa-solid fa-cart-shopping" style="margin-right: 4px;"></i> SEWA SEKARANG
+                        <div style="margin-top: 15px; display: flex; gap: 8px;">
+                            <a href="{{ route('product.show', $product->slug) }}" style="flex: 1; text-align: center; background: #1a1a1a; border: 1px solid #333; color: #ddd; padding: 9px 0; border-radius: 4px; font-weight: 600; font-size: 12px; text-decoration: none; transition: 0.3s;" onmouseover="this.style.borderColor='#8b0000'; this.style.color='#fff';" onmouseout="this.style.borderColor='#333'; this.style.color='#ddd';">
+                                DETAIL
+                            </a>
+                            <a href="{{ route('checkout', $product->id) }}" style="flex: 1.2; text-align: center; background: #8b0000; color: white; padding: 9px 0; border-radius: 4px; font-weight: bold; font-size: 12px; text-decoration: none; transition: 0.3s;" onmouseover="this.style.background='#a10000'" onmouseout="this.style.background='#8b0000'">
+                                <i class="fa-solid fa-cart-shopping" style="margin-right: 3px;"></i> SEWA
                             </a>
                         </div>
                     </div>

@@ -56,12 +56,38 @@ class CatalogController extends Controller
                     $query->where('price_per_day', '<=', $request->max_price);
                 }
                 
-        // 5. EKSEKUSI QUERY PALING TERAKHIR 
-        // Wajib pakai ->withQueryString()
         $products = $query->latest()->paginate(12)->withQueryString();
         
         $breadcrumb = ucfirst($type);
 
         return view('frontend.catalog', compact('categories', 'products', 'pageTitle', 'pageSubtitle', 'breadcrumb', 'type'));
+    }
+
+    /**
+     * Display a dedicated gothic product detail page.
+     */
+    public function show(string $slug)
+    {
+        $product = Product::with(['images', 'category'])
+            ->where('slug', $slug)
+            ->firstOrFail();
+
+        // Get related products from the same category or latest items
+        $relatedProducts = Product::with(['images', 'category'])
+            ->where('id', '!=', $product->id)
+            ->where('category_id', $product->category_id)
+            ->latest()
+            ->take(4)
+            ->get();
+
+        if ($relatedProducts->isEmpty()) {
+            $relatedProducts = Product::with(['images', 'category'])
+                ->where('id', '!=', $product->id)
+                ->latest()
+                ->take(4)
+                ->get();
+        }
+
+        return view('frontend.product-detail', compact('product', 'relatedProducts'));
     }
 }

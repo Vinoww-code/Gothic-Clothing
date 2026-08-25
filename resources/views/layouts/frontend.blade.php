@@ -132,8 +132,13 @@
                     </a>
                 @endguest
                 @auth
-                    <!-- Jika sudah login, sapa nama usernya -->
+                    <!-- Jika sudah login, sapa nama usernya & tautan pesanan saya -->
                     <div style="display: flex; align-items: center; gap: 10px;">
+                        <a href="{{ route('my.orders') }}" style="color: #cbd5e1; text-decoration: none; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: #1a1a1a; border: 1px solid #333; border-radius: 4px; transition: 0.2s;" onmouseover="this.style.borderColor='#8b0000'; this.style.color='#fff';" onmouseout="this.style.borderColor='#333'; this.style.color='#cbd5e1';">
+                            <i class="fa-solid fa-box-archive" style="color: #8b0000;"></i> 
+                            <span class="auth-text">Pesanan Saya</span>
+                        </a>
+
                         <span style="color: #fff; font-size: 14px; font-weight: bold;">
                             <i class="fa-solid fa-user-check"></i> 
                             <span class="auth-text">Halo, {{ strtok(Auth::user()->name, ' ') }}</span>
@@ -141,7 +146,7 @@
                         
                         <form action="{{ route('logout') }}" method="POST" style="margin: 0; display: inline;">
                             @csrf
-                            <button type="submit" title="Keluar" style="background: transparent; border: 1px solid #ff4444; color: #ff4444; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 13px; transition: 0.3s;" onmouseover="this.style.background='#ff4444'; this.style.color='#fff';" onmouseout="this.style.background='transparent'; this.style.color='#ff4444';">
+                            <button type="submit" title="Keluar" style="background: transparent; border: 1px solid #ff4444; color: #ff4444; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 13px; transition: 0.3s;" onmouseover="this.style.background='#ff4444'; this.style.color='#fff';" onmouseout="this.style.background='transparent'; this.style.color='#ff4444';">
                                 <i class="fa-solid fa-right-from-bracket"></i>
                             </button>
                         </form>
@@ -193,10 +198,7 @@
                     <a href="#" class="footer-logo">GOTHIC CLOTHING</a>
                     <p>Penyewaan Kostum & Aksesoris Gothic Premium<br>untuk momen spesial Anda.</p>
                     <div style="margin-top: 15px; display:flex; gap:15px; font-size: 18px;">
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-tiktok"></i></a>
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="https://www.instagram.com/sewa_gothic.clothing"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
                 <div class="footer-col">

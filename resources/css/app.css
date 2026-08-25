@@ -493,3 +493,110 @@ ul { list-style: none; padding: 0; margin: 0; }
     background: var(--bg-light);
     border-color: var(--primary-color);
 }
+
+/* ==========================================================================
+   GOTHIC PAGE LOAD & SCROLL ANIMATIONS (Mewah & Elegan)
+   ========================================================================== */
+
+@keyframes gothicFadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(35px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes gothicFadeInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-25px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes gothicShimmer {
+    0% {
+        box-shadow: 0 0 5px rgba(139, 0, 0, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(139, 0, 0, 0.6), 0 0 35px rgba(139, 0, 0, 0.3);
+    }
+    100% {
+        box-shadow: 0 0 5px rgba(139, 0, 0, 0.2);
+    }
+}
+
+@keyframes crimsonGlowPulse {
+    0%, 100% {
+        text-shadow: 0 0 10px rgba(139, 0, 0, 0.3);
+    }
+    50% {
+        text-shadow: 0 0 25px rgba(220, 38, 38, 0.8), 0 0 45px rgba(139, 0, 0, 0.5);
+    }
+}
+
+/* Page Load Initial Animation Elements */
+.hero-ornament {
+    animation: gothicFadeInDown 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-title {
+    animation: gothicFadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+
+.hero-subtitle {
+    animation: gothicFadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
+.hero-buttons {
+    animation: gothicFadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
+}
+
+.navbar {
+    animation: gothicFadeInDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Scroll & Entrance Reveal */
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Stagger delays for grid items */
+.stagger-delay-1 { transition-delay: 0.1s; }
+.stagger-delay-2 { transition-delay: 0.2s; }
+.stagger-delay-3 { transition-delay: 0.3s; }
+.stagger-delay-4 { transition-delay: 0.4s; }
+
+/* Enhanced Gothic Card Interactions */
+.product-card, .product-card-v2 {
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.product-card:hover, .product-card-v2:hover {
+    transform: translateY(-5px);
+    border-color: #8b0000;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+}

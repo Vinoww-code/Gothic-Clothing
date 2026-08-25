@@ -54,6 +54,14 @@
     
     .form-control:focus { border-color: #8b0000; outline: none; box-shadow: 0 0 0 2px rgba(139, 0, 0, 0.3); }
 
+    .dates-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+    @media (max-width: 500px) { .dates-grid { grid-template-columns: 1fr; } }
+
     .file-upload-box {
         border: 1px dashed #555; padding: 20px; text-align: center;
         border-radius: 6px; background: #0a0a0a; position: relative; transition: 0.3s;
@@ -87,7 +95,7 @@
     #scanLoading { display: none; color: #ff6b6b; font-size: 14px; margin-top: 10px; text-align: center; font-style: italic; }
 </style>
 
-<div class="container">
+<div class="container section-padding" style="padding-top: 110px;">
     <div class="checkout-wrapper">
         <h2 class="checkout-title"><i class="fa-solid fa-file-invoice" style="margin-right: 8px; color: #8b0000;"></i> FORMULIR PENYEWAAN</h2>
         
@@ -101,24 +109,28 @@
             <div style="flex: 1;">
                 <h4 style="margin: 0 0 6px 0; color: #fff; font-size: 17px;">{{ $product->name }}</h4>
                 <div style="color: #888; font-size: 13px; margin-bottom: 6px;">Kategori: {{ $product->category->name ?? 'Gothic' }}</div>
-                <div style="font-size: 14px; color: #aaa;">Tarif Sewa: <span style="color: #ff4444; font-weight: bold;">Rp{{ number_format($product->price_per_day, 0, ',', '.') }}</span> / hari</div>
+                <div style="font-size: 14px; color: #aaa;">Tarif Sewa: <span style="color: #ff4444; font-weight: bold;">Rp {{ number_format($product->price_per_day, 0, ',', '.') }}</span> / hari</div>
             </div>
         </div>
 
         <form action="{{ route('checkout.process', $product->id) }}" method="POST" enctype="multipart/form-data" id="checkoutForm">
             @csrf
             
-            <!-- DURASI SEWA -->
-            <div class="form-group">
-                <label class="form-label">Durasi Sewa (Hari) <span style="color:#ff4444;">*</span></label>
-                <select name="rental_days" id="rentalDays" class="form-control" onchange="calculateTotal()">
-                    <option value="1" {{ old('rental_days') == 1 ? 'selected' : '' }}>1 Hari (Standar)</option>
-                    <option value="2" {{ old('rental_days') == 2 ? 'selected' : '' }}>2 Hari</option>
-                    <option value="3" {{ old('rental_days') == 3 ? 'selected' : '' }}>3 Hari</option>
-                    <option value="5" {{ old('rental_days') == 5 ? 'selected' : '' }}>5 Hari</option>
-                    <option value="7" {{ old('rental_days') == 7 ? 'selected' : '' }}>7 Hari (1 Minggu)</option>
-                </select>
+            <!-- RENTANG TANGGAL SEWA (DATE RANGE) -->
+            <div class="dates-grid">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label">Tanggal Mulai Sewa <span style="color:#ff4444;">*</span></label>
+                    <input type="date" name="start_date" id="startDate" class="form-control" min="{{ date('Y-m-d') }}" value="{{ old('start_date', request('start_date', date('Y-m-d'))) }}" onchange="handleDateChange()">
+                    @error('start_date') <div style="color: #ff6b6b; font-size: 12px; margin-top: 5px;">{{ $message }}</div> @enderror
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label">Tanggal Selesai Sewa <span style="color:#ff4444;">*</span></label>
+                    <input type="date" name="end_date" id="endDate" class="form-control" min="{{ date('Y-m-d') }}" value="{{ old('end_date', request('end_date', date('Y-m-d', strtotime('+1 day')))) }}" onchange="handleDateChange()">
+                    @error('end_date') <div style="color: #ff6b6b; font-size: 12px; margin-top: 5px;">{{ $message }}</div> @enderror
+                </div>
             </div>
+
+            <input type="hidden" name="rental_days" id="rentalDays" value="{{ old('rental_days', 2) }}">
 
             <!-- UPLOAD KTP -->
             <div class="form-group">
@@ -209,7 +221,7 @@
                 <label class="form-label">Metode Pembayaran <span style="color:#ff4444;">*</span></label>
                 <select name="payment_method" class="form-control" required>
                     <option value="" disabled {{ old('payment_method') ? '' : 'selected' }}>-- Pilih Metode Pembayaran --</option>
-                    <option value="qris" {{ old('payment_method') == 'qris' ? 'selected' : '' }}>QRIS (Instant QR & E-Wallet)</option>
+                    <option value="qris" {{ old('payment_method', 'qris') == 'qris' ? 'selected' : '' }}>QRIS (Instant QR & E-Wallet)</option>
                     <option value="dana" {{ old('payment_method') == 'dana' ? 'selected' : '' }}>DANA Transfer</option>
                     <option value="ovo" {{ old('payment_method') == 'ovo' ? 'selected' : '' }}>OVO Transfer</option>
                     <option value="cod" {{ old('payment_method') == 'cod' ? 'selected' : '' }}>Bayar di Tempat (COD / Kasir)</option>
@@ -227,9 +239,12 @@
 
             <!-- TOTAL SUMMARY CARD -->
             <div style="background: #000; border: 1px solid #333; padding: 15px 20px; border-radius: 6px; margin-top: 25px; display: flex; justify-content: space-between; align-items: center;">
-                <span style="color: #aaa; font-size: 14px;">Total Estimasi Pembayaran:</span>
-                <span id="totalDisplay" style="color: #ff4444; font-size: 20px; font-weight: bold;">
-                    Rp{{ number_format($product->price_per_day, 0, ',', '.') }}
+                <div>
+                    <span style="color: #aaa; font-size: 13px; display: block;">Total Estimasi Pembayaran:</span>
+                    <span id="durationSummary" style="color: #64748b; font-size: 12px;">2 Hari Sewa</span>
+                </div>
+                <span id="totalDisplay" style="color: #4ade80; font-size: 20px; font-weight: bold;">
+                    Rp {{ number_format($product->price_per_day * 2, 0, ',', '.') }}
                 </span>
             </div>
 
@@ -255,10 +270,27 @@
 <script>
     const pricePerDay = {{ (int) $product->price_per_day }};
 
-    function calculateTotal() {
-        const days = parseInt(document.getElementById('rentalDays').value) || 1;
-        const total = pricePerDay * days;
-        document.getElementById('totalDisplay').innerText = 'Rp' + total.toLocaleString('id-ID');
+    function handleDateChange() {
+        const startInput = document.getElementById('startDate');
+        const endInput = document.getElementById('endDate');
+
+        if (!startInput.value || !endInput.value) return;
+
+        const start = new Date(startInput.value);
+        const end = new Date(endInput.value);
+
+        if (end < start) {
+            endInput.value = startInput.value;
+        }
+
+        const diffTime = Math.abs(new Date(endInput.value) - new Date(startInput.value));
+        const diffDays = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1);
+
+        document.getElementById('rentalDays').value = diffDays;
+        document.getElementById('durationSummary').innerText = diffDays + ' Hari Sewa';
+
+        const total = pricePerDay * diffDays;
+        document.getElementById('totalDisplay').innerText = 'Rp ' + total.toLocaleString('id-ID');
     }
 
     function toggleDeliveryFields() {
@@ -323,13 +355,13 @@
                 }
                 
                 btn.disabled = false; 
-            }, 1200);
+            }, 1000);
         }
     }
 
     // Auto-calculate on initial load
     document.addEventListener('DOMContentLoaded', () => {
-        calculateTotal();
+        handleDateChange();
         toggleDeliveryFields();
     });
 </script>

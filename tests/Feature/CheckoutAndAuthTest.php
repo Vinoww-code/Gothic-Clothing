@@ -19,6 +19,7 @@ class CheckoutAndAuthTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Storage::fake('local');
         Storage::fake('public');
     }
 
@@ -129,9 +130,9 @@ class CheckoutAndAuthTest extends TestCase
         $this->assertEquals('qris', $order->payment_method);
         $this->assertEquals('pending', $order->payment_status);
 
-        // Storage checks
-        Storage::disk('public')->assertExists($order->id_card_path);
-        Storage::disk('public')->assertExists($order->selfie_path);
+        // Storage checks (private storage)
+        Storage::disk('local')->assertExists($order->id_card_path);
+        Storage::disk('local')->assertExists($order->selfie_path);
 
         // Response should redirect to success page
         $response->assertRedirect(route('checkout.success', $order->order_code));
